@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мой Asset Store</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+        }
+        .asset-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .asset-item {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .asset-item h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        .asset-item p {
+            margin-bottom: 10px;
+            color: #666;
+        }
+        .asset-item a {
+            display: inline-block;
+            background-color: #007bff;
+            color: white;
+            padding: 10px 15px;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+        .asset-item a:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Доступные Ассеты</h1>
+
+    <div id="asset-list" class="asset-list">
+        <!-- Здесь будут загружены ассеты -->
+    </div>
+
+    <script>
+        async function loadAssetInfo(folderName) {
+            try {
+                const response = await fetch(`assets/${folderName}/info.txt`);
+                if (!response.ok) {
+                    throw new Error(`Ошибка загрузки info.txt для ${folderName}: ${response.statusText}`);
+                }
+                const text = await response.text();
+                const lines = text.split('\n');
+                const info = {};
+                lines.forEach(line => {
+                    const [key, value] = line.split(':').map(item => item.trim());
+                    if (key && value !== undefined) {
+                        info[key] = value;
+                    }
+                });
+                return info;
+            } catch (error) {
+                console.error(error);
+                return null; // Возвращаем null, если файл не найден или ошибка
+            }
+        }
+
+        async function displayAssets() {
+            const assetListDiv = document.getElementById('asset-list');
+            // В реальном приложении список папок с ассетами нужно получать с сервера
+            // Здесь мы просто перечисляем папки вручную для примера
+            const assetFolders = ['asset1', 'asset2']; // Добавьте сюда названия папок с вашими ассетами
+
+            for (const folder of assetFolders) {
+                const assetInfo = await loadAssetInfo(folder);
+                if (assetInfo) {
+                    const assetItem = document.createElement('div');
+                    assetItem.classList.add('asset-item');
+
+                    assetItem.innerHTML = `
+                        <h3>${assetInfo.name || 'Название не указано'}</h3>
+                        <p><strong>Версия движка:</strong> ${assetInfo.engine_version || 'Не указано'}</p>
+                        <p><strong>Версия ассета:</strong> ${assetInfo.asset_version || 'Не указано'}</p>
+                        <p>${assetInfo.description || 'Описание отсутствует.'}</p>
+                        <a href="assets/${folder}/${assetInfo.archive}" download="${assetInfo.archive}">Скачать</a>
+                    `;
+
+                    assetListDiv.appendChild(assetItem);
+                }
+            }
+        }
+
+        // Загружаем и отображаем ассеты при загрузке страницы
+        displayAssets();
+
+    </script>
+
+</body>
+</html>

@@ -1,5 +1,5 @@
 archive: UPhisics.zip
-name: ULIGHT Phisics
+name: ULIGHT Physics
 engine_version: Ulight game engine 7.0.1
 asset_version: 0.1
 description: Это расширение от exe-boi'я, созданая для коллизии. Вскоре там будут добавлены Rigidbody и Staticbody.

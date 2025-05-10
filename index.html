@@ -3,55 +3,196 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ulight asset store</title>
+    <title>Ulight Asset Store</title>
     <style>
-        body {
-            font-family: sans-serif;
-            margin: 20px;
-            background-color: #f4f4f4;
+        :root {
+            --bg-color: #1a1a1a;
+            --card-bg: #2d2d2d;
+            --text-color: #e0e0e0;
+            --text-secondary: #b0b0b0;
+            --primary-color: #4a6bff;
+            --primary-hover: #3a5bef;
+            --border-radius: 10px;
+            --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
         }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+        
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #333;
+        }
+        
+        h1 {
+            margin: 0;
+            font-size: 2.2rem;
+            background: linear-gradient(90deg, #4a6bff, #8a2be2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .theme-switcher {
+            background: var(--card-bg);
+            border: none;
+            color: var(--text-color);
+            padding: 8px 15px;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
         .asset-list {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 20px;
         }
+        
         .asset-item {
-            background-color: #fff;
-            border-radius: 8px;
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
             padding: 20px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            box-shadow: var(--box-shadow);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid #333;
         }
+        
+        .asset-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            border-color: var(--primary-color);
+        }
+        
         .asset-item h3 {
             margin-top: 0;
-            color: #333;
+            margin-bottom: 15px;
+            color: var(--text-color);
+            font-size: 1.4rem;
         }
+        
         .asset-item p {
             margin-bottom: 10px;
-            color: #666;
+            color: var(--text-secondary);
         }
-        .asset-item a {
-            display: inline-block;
-            background-color: #007bff;
+        
+        .asset-item strong {
+            color: var(--text-color);
+        }
+        
+        .download-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--primary-color);
             color: white;
-            padding: 10px 15px;
+            padding: 10px 20px;
             text-decoration: none;
-            border-radius: 5px;
-            margin-top: 10px;
+            border-radius: var(--border-radius);
+            margin-top: 15px;
+            font-weight: 500;
+            transition: background-color 0.3s ease;
+            width: 100%;
+            text-align: center;
+            gap: 8px;
         }
-        .asset-item a:hover {
-            background-color: #0056b3;
+        
+        .download-btn:hover {
+            background-color: var(--primary-hover);
+        }
+        
+        .version-badge {
+            display: inline-block;
+            background: #333;
+            color: #fff;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            margin-left: 8px;
+            vertical-align: middle;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-secondary);
+        }
+        
+        @media (max-width: 768px) {
+            .asset-list {
+                grid-template-columns: 1fr;
+            }
+            
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
         }
     </style>
 </head>
 <body>
-
-    <h1>Доступные Ассеты</h1>
+    <header>
+        <h1>Ulight Asset Store</h1>
+        <button class="theme-switcher" id="themeSwitcher">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+            </svg>
+            Светлая тема
+        </button>
+    </header>
 
     <div id="asset-list" class="asset-list">
-        <!-- Здесь будут загружены ассеты -->
+        <div class="loading">Загрузка ассетов...</div>
     </div>
 
     <script>
+        // Тема по умолчанию - темная
+        let isDarkTheme = true;
+        
+        // Функция для переключения темы
+        function toggleTheme() {
+            isDarkTheme = !isDarkTheme;
+            document.body.classList.toggle('light-theme');
+            
+            const themeSwitcher = document.getElementById('themeSwitcher');
+            if (isDarkTheme) {
+                themeSwitcher.innerHTML = `
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    Светлая тема`;
+            } else {
+                themeSwitcher.innerHTML = `
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                    Тёмная тема`;
+            }
+        }
+        
+        // Добавляем обработчик для кнопки переключения темы
+        document.getElementById('themeSwitcher').addEventListener('click', toggleTheme);
+
         async function loadAssetInfo(folderName) {
             try {
                 const response = await fetch(`assets/${folderName}/info.txt`);
@@ -70,15 +211,22 @@
                 return info;
             } catch (error) {
                 console.error(error);
-                return null; // Возвращаем null, если файл не найден или ошибка
+                return null;
             }
         }
 
         async function displayAssets() {
             const assetListDiv = document.getElementById('asset-list');
+            assetListDiv.innerHTML = ''; // Очищаем сообщение о загрузке
+            
             // В реальном приложении список папок с ассетами нужно получать с сервера
-            // Здесь мы просто перечисляем папки вручную для примера
-            const assetFolders = ['UPhisics', 'sprites-base', 'Character-NOT-RIGGED']; // Добавьте сюда названия папок с вашими ассетами
+            const assetFolders = ['UPhisics', 'sprites-base', 'Character-NOT-RIGGED'];
+            
+            // Если нет ассетов
+            if (assetFolders.length === 0) {
+                assetListDiv.innerHTML = '<div class="asset-item"><p>Нет доступных ассетов</p></div>';
+                return;
+            }
 
             for (const folder of assetFolders) {
                 const assetInfo = await loadAssetInfo(folder);
@@ -87,11 +235,20 @@
                     assetItem.classList.add('asset-item');
 
                     assetItem.innerHTML = `
-                        <h3>${assetInfo.name || 'Название не указано'}</h3>
+                        <h3>${assetInfo.name || 'Название не указано'}
+                            ${assetInfo.asset_version ? `<span class="version-badge">v${assetInfo.asset_version}</span>` : ''}
+                        </h3>
                         <p><strong>Версия движка:</strong> ${assetInfo.engine_version || 'Не указано'}</p>
-                        <p><strong>Версия ассета:</strong> ${assetInfo.asset_version || 'Не указано'}</p>
+                        <p><strong>Автор:</strong> ${assetInfo.author || 'Не указан'}</p>
                         <p>${assetInfo.description || 'Описание отсутствует.'}</p>
-                        <a href="assets/${folder}/${assetInfo.archive}" download="${assetInfo.archive}">Скачать</a>
+                        <a href="assets/${folder}/${assetInfo.archive}" download="${assetInfo.archive}" class="download-btn">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="7 10 12 15 17 10"></polyline>
+                                <line x1="12" y1="15" x2="12" y2="3"></line>
+                            </svg>
+                            Скачать
+                        </a>
                     `;
 
                     assetListDiv.appendChild(assetItem);
@@ -100,9 +257,7 @@
         }
 
         // Загружаем и отображаем ассеты при загрузке страницы
-        displayAssets();
-
+        document.addEventListener('DOMContentLoaded', displayAssets);
     </script>
-
 </body>
 </html>

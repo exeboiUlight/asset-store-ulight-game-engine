@@ -1,6 +1,6 @@
 archive: base.zip
 name: Sprite-base
 engine_version: Ulight game engine 7.0.1
-asset_version: 0.1
 author: exe boi
+asset_version: 0.1
 description: Это расширение от exe-boi'я, с спрайтами.

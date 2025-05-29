@@ -5,128 +5,337 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ulight Asset Store</title>
     <style>
+
+        .upload-btn-container {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 100;
+        }
+
+        .upload-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 60px;
+            height: 60px;
+            background: var(--gradient);
+            color: white;
+            border-radius: 50%;
+            box-shadow: 0 6px 20px rgba(229, 49, 112, 0.4);
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .upload-btn:hover {
+            transform: scale(1.1) translateY(-5px);
+            box-shadow: 0 10px 30px rgba(229, 49, 112, 0.6);
+        }
+
+        .upload-btn svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .upload-tooltip {
+            position: absolute;
+            right: 70px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--card-bg);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .upload-btn:hover .upload-tooltip {
+            opacity: 1;
+        }
+
+        @media (max-width: 768px) {
+            .upload-btn-container {
+                bottom: 20px;
+                right: 20px;
+            }
+        }
+
         :root {
-            --bg-color: #1a1a1a;
-            --card-bg: #2d2d2d;
-            --text-color: #e0e0e0;
-            --text-secondary: #b0b0b0;
-            --primary-color: #4a6bff;
-            --primary-hover: #3a5bef;
-            --border-radius: 10px;
-            --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            --bg-color: #0f0e17;
+            --card-bg: #1f1f2e;
+            --text-color: #fffffe;
+            --text-secondary: #a7a9be;
+            --primary-color: #ff8906;
+            --primary-hover: #e53170;
+            --accent-color: #e53170;
+            --border-radius: 16px;
+            --box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            --gradient: linear-gradient(135deg, #ff8906 0%, #e53170 100%);
         }
         
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
             padding: 20px;
             background-color: var(--bg-color);
             color: var(--text-color);
             line-height: 1.6;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(229, 49, 112, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(255, 137, 6, 0.1) 0%, transparent 20%);
         }
         
         header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 30px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid #333;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+        }
+        
+        header::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100px;
+            height: 3px;
+            background: var(--gradient);
+            border-radius: 3px;
         }
         
         h1 {
             margin: 0;
-            font-size: 2.2rem;
-            background: linear-gradient(90deg, #4a6bff, #8a2be2);
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: var(--gradient);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            text-shadow: 0 2px 10px rgba(229, 49, 112, 0.3);
+            letter-spacing: -0.5px;
         }
         
         .theme-switcher {
-            background: var(--card-bg);
+            background: rgba(255, 255, 255, 0.1);
             border: none;
             color: var(--text-color);
-            padding: 8px 15px;
-            border-radius: var(--border-radius);
+            padding: 10px 20px;
+            border-radius: 50px;
             cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+        
+        .theme-switcher:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
         }
         
         .asset-list {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 25px;
         }
         
         .asset-item {
             background-color: var(--card-bg);
             border-radius: var(--border-radius);
-            padding: 20px;
+            padding: 25px;
             box-shadow: var(--box-shadow);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            border: 1px solid #333;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .asset-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: var(--gradient);
         }
         
         .asset-item:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            transform: translateY(-10px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
             border-color: var(--primary-color);
         }
         
         .asset-item h3 {
             margin-top: 0;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
             color: var(--text-color);
-            font-size: 1.4rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .asset-item h3::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 40px;
+            height: 3px;
+            background: var(--primary-color);
+            border-radius: 3px;
         }
         
         .asset-item p {
-            margin-bottom: 10px;
+            margin-bottom: 15px;
             color: var(--text-secondary);
         }
         
         .asset-item strong {
             color: var(--text-color);
+            font-weight: 600;
         }
         
         .download-btn {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            background-color: var(--primary-color);
+            background: var(--gradient);
             color: white;
-            padding: 10px 20px;
+            padding: 12px 25px;
             text-decoration: none;
-            border-radius: var(--border-radius);
-            margin-top: 15px;
-            font-weight: 500;
-            transition: background-color 0.3s ease;
-            width: 100%;
+            border-radius: 50px; /* Полностью закругленная кнопка */
+            margin: 20px auto 0;
+            font-weight: 600;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); /* Плавный переход */
+            width: fit-content;
             text-align: center;
-            gap: 8px;
+            gap: 10px;
+            font-size: 1rem;
+            box-shadow: 0 4px 15px rgba(229, 49, 112, 0.3);
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+            border: 2px solid transparent; /* Добавляем границу */
+        }
+
+        .download-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(229, 49, 112, 0.4);
+            border-radius: 8px; /* Меняем на квадратные углы */
+            border-color: var(--text-color); /* Белая граница при наведении */
+            animation: pulse 1s infinite alternate; /* Добавляем пульсацию */
+        }
+
+        @keyframes pulse {
+            from {
+                box-shadow: 0 0 0 0 rgba(229, 49, 112, 0.4);
+            }
+            to {
+                box-shadow: 0 0 0 10px rgba(229, 49, 112, 0);
+            }
         }
         
-        .download-btn:hover {
-            background-color: var(--primary-hover);
+        .download-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #e53170 0%, #ff8906 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: -1;
+        }
+        
+        .download-btn:hover::before {
+            opacity: 1;
         }
         
         .version-badge {
             display: inline-block;
-            background: #333;
+            background: var(--gradient);
             color: #fff;
-            padding: 3px 8px;
-            border-radius: 12px;
+            padding: 4px 12px;
+            border-radius: 50px;
             font-size: 0.8rem;
-            margin-left: 8px;
+            margin-left: 10px;
             vertical-align: middle;
+            font-weight: 700;
+            box-shadow: 0 2px 8px rgba(229, 49, 112, 0.3);
         }
         
         .loading {
             text-align: center;
-            padding: 40px;
+            padding: 50px;
             color: var(--text-secondary);
+            grid-column: 1 / -1;
+            font-size: 1.2rem;
+        }
+        
+        .loading::after {
+            content: '...';
+            animation: dots 1.5s infinite;
+        }
+        
+        @keyframes dots {
+            0%, 20% { content: '.'; }
+            40% { content: '..'; }
+            60%, 100% { content: '...'; }
+        }
+        
+        /* Анимация появления карточек */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .asset-item {
+            animation: fadeInUp 0.6s ease forwards;
+            opacity: 0;
+        }
+        
+        .asset-item:nth-child(1) { animation-delay: 0.1s; }
+        .asset-item:nth-child(2) { animation-delay: 0.2s; }
+        .asset-item:nth-child(3) { animation-delay: 0.3s; }
+        .asset-item:nth-child(4) { animation-delay: 0.4s; }
+        .asset-item:nth-child(5) { animation-delay: 0.5s; }
+        
+        /* Стиль для светлой темы */
+        body.light-theme {
+            --bg-color: #f9f9f9;
+            --card-bg: #ffffff;
+            --text-color: #2e2e3a;
+            --text-secondary: #6e6e7a;
+            --primary-color: #ff5e62;
+            --primary-hover: #ff9966;
+            --accent-color: #ff9966;
+            --gradient: linear-gradient(135deg, #ff5e62 0%, #ff9966 100%);
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(255, 94, 98, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(255, 153, 102, 0.1) 0%, transparent 20%);
+        }
+        
+        body.light-theme .asset-item {
+            border: 1px solid rgba(0, 0, 0, 0.05);
         }
         
         @media (max-width: 768px) {
@@ -137,29 +346,65 @@
             header {
                 flex-direction: column;
                 align-items: flex-start;
-                gap: 15px;
+                gap: 20px;
+            }
+            
+            h1 {
+                font-size: 2rem;
             }
         }
     </style>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
     <header>
         <h1>Ulight Asset Store</h1>
+
+        <input type="text" id="searchInput" placeholder="Поиск расширений..." style="padding: 10px 15px; border-radius: 50px; border: none; outline: none; width: 250px; font-size: 1rem;">
+        
         <button class="theme-switcher" id="themeSwitcher">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
             </svg>
             Светлая тема
         </button>
+
+        <div class="upload-btn-container">
+            <button class="upload-btn" id="uploadBtn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="17 8 12 3 7 8"></polyline>
+                    <line x1="12" y1="3" x2="12" y2="15"></line>
+                </svg>
+                <span class="upload-tooltip">Загрузить новый ассет</span>
+            </button>
+        </div>
+
     </header>
 
     <div id="asset-list" class="asset-list">
-        <div class="loading">Загрузка ассетов...</div>
+        <div class="loading">Загрузка ассетов</div>
     </div>
 
     <script>
         // Тема по умолчанию - темная
         let isDarkTheme = true;
+
+        document.getElementById('searchInput').addEventListener('input', function() {
+            const filterText = this.value.toLowerCase();
+            const assets = document.querySelectorAll('.asset-item');
+
+            assets.forEach(asset => {
+                const title = asset.querySelector('h3').textContent.toLowerCase();
+                const description = asset.querySelector('p').textContent.toLowerCase();
+            
+                if (title.includes(filterText) || description.includes(filterText)) {
+                    asset.style.display = '';
+                } else {
+                    asset.style.display = 'none';
+                }
+            });
+        });
         
         // Функция для переключения темы
         function toggleTheme() {
@@ -169,13 +414,13 @@
             const themeSwitcher = document.getElementById('themeSwitcher');
             if (isDarkTheme) {
                 themeSwitcher.innerHTML = `
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
                     </svg>
                     Светлая тема`;
             } else {
                 themeSwitcher.innerHTML = `
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <circle cx="12" cy="12" r="5"></circle>
                         <line x1="12" y1="1" x2="12" y2="3"></line>
                         <line x1="12" y1="21" x2="12" y2="23"></line>
@@ -188,6 +433,12 @@
                     </svg>
                     Тёмная тема`;
             }
+            
+            // Анимация переключения темы
+            document.body.style.transition = 'background-color 0.5s ease, color 0.5s ease';
+            setTimeout(() => {
+                document.body.style.transition = '';
+            }, 500);
         }
         
         // Добавляем обработчик для кнопки переключения темы
@@ -219,8 +470,11 @@
             const assetListDiv = document.getElementById('asset-list');
             assetListDiv.innerHTML = ''; // Очищаем сообщение о загрузке
             
+            // Имитация задержки загрузки для демонстрации анимации
+            await new Promise(resolve => setTimeout(resolve, 800));
+            
             // В реальном приложении список папок с ассетами нужно получать с сервера
-            const assetFolders = ['UPhisics', 'sprites-base', 'Character-NOT-RIGGED'];
+            const assetFolders = ['UPhisics', 'sprites-base', 'Character-NOT-RIGGED', 'UI-Pack', 'Sound-Effects'];
             
             // Если нет ассетов
             if (assetFolders.length === 0) {
@@ -242,7 +496,7 @@
                         <p><strong>Автор:</strong> ${assetInfo.author || 'Не указан'}</p>
                         <p>${assetInfo.description || 'Описание отсутствует.'}</p>
                         <a href="assets/${folder}/${assetInfo.archive}" download="${assetInfo.archive}" class="download-btn">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                                 <polyline points="7 10 12 15 17 10"></polyline>
                                 <line x1="12" y1="15" x2="12" y2="3"></line>

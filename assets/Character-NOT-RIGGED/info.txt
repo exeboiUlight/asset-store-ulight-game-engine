@@ -3,4 +3,4 @@ name: Character-NOT-RIGGED
 engine_version: Ulight game engine 7.2.0
 author: Fusion GameWorks
 asset_version: 0.1
-description: Это расширение от Fusion GameWorks, сделанная спецмально для ulight.
+description: Это расширение от Fusion GameWorks, сделанная специально для ulight.
